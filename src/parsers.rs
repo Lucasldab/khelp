@@ -17,6 +17,9 @@ pub fn parse(tool: &Tool) -> Vec<Bind> {
         "imv_ini"   => parse_ini(&raw, "binds"),
         "aerc"      => parse_aerc(&raw),
         "kitty"     => parse_kitty(&raw),
+        "mpv_input" => parse_mpv(&raw),
+        "nvim_lua"  => parse_nvim(&raw),
+        "yazi_toml" => parse_yazi(&raw),
         "static"    => parse_static(tool),
         _           => vec![],
     }
@@ -153,6 +156,114 @@ fn parse_kitty(raw: &str) -> Vec<Bind> {
             Some(Bind { section: "binds".into(), key, action })
         })
         .collect()
+}
+
+fn parse_mpv(raw: &str) -> Vec<Bind> {
+    let mut out = vec![];
+    for line in raw.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') { continue; }
+        let (head, _) = match t.find('#') { Some(i) => t.split_at(i), None => (t, "") };
+        let head = head.trim();
+        let mut parts = head.splitn(2, char::is_whitespace);
+        let key = match parts.next() { Some(k) if !k.is_empty() => k.to_string(), _ => continue };
+        let action = parts.next().unwrap_or("").trim().to_string();
+        if action.is_empty() { continue; }
+        out.push(Bind { section: "binds".into(), key, action });
+    }
+    out
+}
+
+fn parse_nvim(raw: &str) -> Vec<Bind> {
+    let mut out = vec![];
+    for line in raw.lines() {
+        let t = line.trim();
+        if !t.starts_with("vim.keymap.set") { continue; }
+        let open = match t.find('(') { Some(i) => i + 1, None => continue };
+        let rest = &t[open..];
+        let (mode, after_mode) = take_arg(rest);
+        let (lhs, after_lhs) = take_arg(after_mode);
+        let (rhs, _after_rhs) = take_arg(after_lhs);
+        if lhs.is_empty() { continue; }
+        let m = mode.trim_matches(|c: char| c == '"' || c == '{' || c == '}' || c == '\'' || c.is_whitespace())
+            .replace('"', "").replace(' ', "");
+        let m_short = m.replace(',', "/");
+        let action = rhs.trim_matches('"').trim().to_string();
+        let key = lhs.trim_matches('"').to_string();
+        let section = if m_short.is_empty() { "binds".into() } else { m_short };
+        out.push(Bind { section, key, action });
+    }
+    out
+}
+
+// Extract the first comma-separated argument from a Lua arg list, respecting
+// quoted strings and nested {}/() brackets. Returns (arg, remainder).
+fn take_arg(s: &str) -> (String, &str) {
+    let bytes = s.as_bytes();
+    let mut depth_brace = 0i32;
+    let mut depth_paren = 0i32;
+    let mut in_str: Option<u8> = None;
+    let mut esc = false;
+    let mut i = 0;
+    while i < bytes.len() {
+        let c = bytes[i];
+        if esc { esc = false; i += 1; continue; }
+        match in_str {
+            Some(q) => {
+                if c == b'\\' { esc = true; }
+                else if c == q { in_str = None; }
+            }
+            None => match c {
+                b'"' | b'\'' => in_str = Some(c),
+                b'{' => depth_brace += 1,
+                b'}' => depth_brace -= 1,
+                b'(' => depth_paren += 1,
+                b')' => {
+                    if depth_paren == 0 { return (s[..i].trim().to_string(), &s[i..]); }
+                    depth_paren -= 1;
+                }
+                b',' if depth_brace == 0 && depth_paren == 0 => {
+                    return (s[..i].trim().to_string(), &s[i+1..]);
+                }
+                _ => {}
+            }
+        }
+        i += 1;
+    }
+    (s.trim().to_string(), "")
+}
+
+fn parse_yazi(raw: &str) -> Vec<Bind> {
+    let parsed: toml::Value = match toml::from_str(raw) {
+        Ok(v) => v,
+        Err(_) => return vec![],
+    };
+    let mut out = vec![];
+    // Collect arrays-of-tables under common sections: mgr.{,prepend_,append_}keymap
+    let candidates = [
+        ("mgr", "keymap"),
+        ("mgr", "prepend_keymap"),
+        ("mgr", "append_keymap"),
+        ("manager", "keymap"),
+        ("manager", "prepend_keymap"),
+        ("manager", "append_keymap"),
+        ("input", "keymap"),
+        ("input", "prepend_keymap"),
+    ];
+    for (top, arr) in candidates {
+        let Some(t) = parsed.get(top).and_then(|v| v.get(arr)).and_then(|v| v.as_array()) else { continue };
+        for entry in t {
+            let on = entry.get("on").and_then(|v| v.as_str())
+                .or_else(|| entry.get("on").and_then(|v| v.as_array()).and_then(|a| a.first()).and_then(|v| v.as_str()))
+                .unwrap_or("");
+            if on.is_empty() { continue; }
+            let desc = entry.get("desc").and_then(|v| v.as_str()).unwrap_or_else(|| {
+                entry.get("run").and_then(|v| v.as_str()).unwrap_or("")
+            });
+            out.push(Bind { section: format!("{top}.{arr}"), key: on.into(), action: desc.into() });
+        }
+    }
+    out
 }
 
 fn parse_static(tool: &Tool) -> Vec<Bind> {

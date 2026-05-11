@@ -5,6 +5,9 @@
 #   "imv_ini"       — [binds] section, key = action
 #   "aerc"          — [section]\n key = command
 #   "kitty"         — map <key> <action>
+#   "mpv_input"     — key cmd ...  (mpv input.conf)
+#   "nvim_lua"      — vim.keymap.set("mode", "lhs", "rhs") in Lua source
+#   "yazi_toml"     — [[mgr.{,prepend_,append_}keymap]] on/run/desc
 #   "static"        — read static_binds inline
 #
 # Each tool lists its config path (for `gd` jump-to-config).
@@ -73,4 +76,100 @@ static_binds = [
   ["prefix + S/L",            "save/restore session"],
   ["prefix + Ctrl-F",         "sessionizer"],
   ["prefix + Alt-H/T",        "slot 0/1"],
+]
+
+[[tool]]
+name = "nvim"
+path = "~/.config/nvim/lua/lucas/remap.lua"
+parser = "nvim_lua"
+
+[[tool]]
+name = "mpv"
+path = "~/.config/mpv/input.conf"
+parser = "mpv_input"
+
+[[tool]]
+name = "yazi"
+path = "~/.config/yazi/keymap.toml"
+parser = "yazi_toml"
+
+[[tool]]
+name = "zathura"
+path = "~/.config/zathura/zathurarc"
+parser = "static"
+section = "defaults"
+static_binds = [
+  ["j / k",                  "scroll down / up"],
+  ["h / l",                  "scroll left / right"],
+  ["Space / Shift+Space",    "next / prev page"],
+  ["J / K",                  "page down / up"],
+  ["gg / G",                 "first / last page"],
+  ["d / u",                  "half page down / up"],
+  ["+ / -",                  "zoom in / out"],
+  ["=",                      "fit width"],
+  ["s",                      "fit page"],
+  ["a",                      "toggle adjust mode"],
+  ["r",                      "rotate"],
+  ["f",                      "follow link"],
+  ["F",                      "show link target"],
+  ["/",                      "search forward"],
+  ["?",                      "search backward"],
+  ["n / N",                  "next / prev match"],
+  ["m<letter> / '<letter>",  "set / jump bookmark"],
+  ["Tab",                    "toggle index"],
+  ["F5 / F11",               "presentation / fullscreen"],
+  ["Ctrl+r",                 "recolor (dark mode)"],
+  ["q",                      "quit"],
+]
+
+[[tool]]
+name = "fuzzel"
+path = "~/.config/fuzzel/fuzzel.ini"
+parser = "static"
+section = "defaults"
+static_binds = [
+  ["Tab / Shift+Tab",        "next / prev match"],
+  ["Down / Up",              "next / prev match"],
+  ["Enter",                  "launch"],
+  ["Ctrl+Enter",             "launch + keep open"],
+  ["Esc / Ctrl+G",           "cancel"],
+  ["Ctrl+U",                 "clear input"],
+  ["Ctrl+W",                 "delete word back"],
+]
+
+[[tool]]
+name = "mako"
+path = "~/.config/mako/config"
+parser = "static"
+section = "defaults"
+static_binds = [
+  ["Ctrl+Space",             "dismiss top notification"],
+  ["Ctrl+Shift+Space",       "dismiss all"],
+  ["Ctrl+Grave",             "invoke default action"],
+  ["Ctrl+Shift+period",      "restore last"],
+]
+
+[[tool]]
+name = "waybar"
+path = "~/.config/waybar/config"
+parser = "static"
+section = "module-clicks"
+static_binds = [
+  ["click music",            "mpd play-pause"],
+  ["scroll music",           "volume up / down"],
+  ["click clock",            "show calendar popup"],
+  ["click tray",             "open app menu"],
+  ["click workspaces",       "switch workspace"],
+]
+
+[[tool]]
+name = "localsend"
+path = "~/.local/bin/km-localsend"
+parser = "static"
+section = "tui-menu"
+static_binds = [
+  ["send",                   "fd+fzf picker → lssend"],
+  ["inbox",                  "open ~/localsend in yazi"],
+  ["status",                 "systemctl --user status localsend"],
+  ["restart daemon",         "systemctl --user restart localsend"],
 ]
