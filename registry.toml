@@ -1,0 +1,76 @@
+# km tool registry — add a new [[tool]] block to register one
+# parser variants:
+#   "hypr_bind"     — Hyprland keybinds.conf  (bind/binde/bindl/bindle/bindm)
+#   "ncmpcpp"       — def_key "x"\n  action[\n  action2...]
+#   "imv_ini"       — [binds] section, key = action
+#   "aerc"          — [section]\n key = command
+#   "kitty"         — map <key> <action>
+#   "static"        — read static_binds inline
+#
+# Each tool lists its config path (for `gd` jump-to-config).
+
+[[tool]]
+name = "hyprland"
+path = "~/.config/hypr/keybinds.conf"
+parser = "hypr_bind"
+
+[[tool]]
+name = "ncmpcpp"
+path = "~/.config/ncmpcpp/bindings"
+parser = "ncmpcpp"
+
+[[tool]]
+name = "imv"
+path = "~/.config/imv/config"
+parser = "imv_ini"
+
+[[tool]]
+name = "aerc"
+path = "~/.config/aerc/binds.conf"
+parser = "aerc"
+
+[[tool]]
+name = "kitty"
+path = "~/.config/kitty/kitty.conf"
+parser = "kitty"
+
+[[tool]]
+name = "reader"
+path = "/home/projects/readingViewer/README.md"
+parser = "static"
+section = "core"
+static_binds = [
+  ["j / Down",       "scroll down"],
+  ["k / Up",         "scroll up"],
+  ["Shift+scroll",   "fast scroll"],
+  ["Space",          "page down"],
+  ["b",              "page up"],
+  ["g",              "go to top"],
+  ["End",            "go to bottom"],
+  ["+ / =",          "zoom in"],
+  ["-",              "zoom out"],
+  ["0",              "reset zoom"],
+  ["Ctrl+scroll",    "zoom"],
+  ["f",              "fullscreen"],
+  ["q / Esc",        "quit"],
+]
+
+[[tool]]
+name = "tmux"
+path = "~/.config/tmux/tmux.conf"
+parser = "static"
+section = "core"
+static_binds = [
+  ["prefix + v",              "copy mode"],
+  ["prefix + y",              "copy to clipboard"],
+  ["prefix + h/t/n/s",        "pane nav (HTNS)"],
+  ["prefix + ./,",            "next/prev window"],
+  ["prefix + ^",              "last window"],
+  ["prefix + r",              "reload config"],
+  ["prefix + D",              "open TODO.md"],
+  ["prefix + R",              "rename session"],
+  ["prefix + X",              "kill session"],
+  ["prefix + S/L",            "save/restore session"],
+  ["prefix + Ctrl-F",         "sessionizer"],
+  ["prefix + Alt-H/T",        "slot 0/1"],
+]

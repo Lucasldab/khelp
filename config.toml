@@ -1,0 +1,30 @@
+# khelp config — copy to ~/.config/khelp/config.toml to override defaults
+
+[colors]
+pink         = "#FF6EC7"
+lilac        = "#9A6DD7"
+mauve        = "#5A2A82"
+fg           = "#E5E5E5"
+gray         = "#6A6A6A"
+highlight_bg = "#3C1932"
+
+# Keybinds — values are key strings; supported forms:
+#   single char          "j"
+#   chord (2-char)       "gg" "gd"
+#   special              "Esc" "Enter" "Tab" "BS" "Left/Right/Up/Down" "F1"..."F12"
+#   ctrl combo           "ctrl-c"
+[keybinds]
+quit         = "q"
+quit_alt     = "Esc"
+focus_tools  = "h"
+focus_binds  = "l"
+focus_toggle = "Tab"
+down         = "j"
+up           = "k"
+first        = "gg"
+last         = "G"
+search       = "/"
+yank_key     = "y"
+yank_action  = "Y"
+open_config  = "gd"
+reload       = "r"
