@@ -135,10 +135,21 @@ fn parse_aerc(raw: &str) -> Vec<Bind> {
         }
         if let Some(eq) = t.find('=') {
             let key = strip(&t[..eq]);
-            let mut act = strip(&t[eq+1..]);
-            act = act.replace("<Enter>", "");
-            if let Some(s) = act.strip_prefix(':') { act = s.into(); }
-            out.push(Bind { section: section.clone(), key, action: act });
+            let rest = &t[eq+1..];
+            // aerc allows trailing "# comment" on bind lines; prefer it as the description
+            let (cmd, desc) = match rest.find(" # ") {
+                Some(i) => (&rest[..i], rest[i+3..].trim()),
+                None => (rest, ""),
+            };
+            let action = if desc.is_empty() {
+                let mut act = strip(cmd);
+                act = act.replace("<Enter>", "");
+                if let Some(s) = act.strip_prefix(':') { act = s.into(); }
+                act
+            } else {
+                desc.to_string()
+            };
+            out.push(Bind { section: section.clone(), key, action });
         }
     }
     out
