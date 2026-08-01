@@ -18,9 +18,33 @@ path = "~/.config/hypr/keybinds.conf"
 parser = "hypr_bind"
 
 [[tool]]
-name = "ncmpcpp"
-path = "~/.config/ncmpcpp/bindings"
-parser = "ncmpcpp"
+name = "rmpc"
+path = "~/.config/rmpc/config.ron"
+parser = "static"
+section = "core"
+static_binds = [
+  ["q",                      "quit"],
+  ["?",                      "show help"],
+  [":",                      "command mode"],
+  ["p",                      "play / pause"],
+  ["s",                      "stop"],
+  ["> / <",                  "next / prev track"],
+  ["f / b",                  "seek fwd / back"],
+  [". / ,",                  "volume up / down"],
+  ["z / x / c / v",          "repeat / random / consume / single"],
+  ["1..7",                   "Queue/Dirs/Artists/AlbumArtists/Albums/Playlists/Search"],
+  ["Tab / S-Tab",            "next / prev tab"],
+  ["j / k",                  "down / up"],
+  ["gg / G",                 "top / bottom"],
+  ["<C-u> / <C-d>",          "half page up / down"],
+  ["/",                      "search"],
+  ["n / N",                  "next / prev match"],
+  ["a / A",                  "add / add all"],
+  ["D",                      "delete from queue"],
+  ["<Space>",                "select"],
+  ["<CR>",                   "confirm"],
+  ["<C-U>",                  "MPD rescan"],
+]
 
 [[tool]]
 name = "imv"
@@ -84,6 +108,51 @@ path = "~/.config/nvim/lua/lucas/remap.lua"
 parser = "nvim_lua"
 
 [[tool]]
+name = "nvim-motions"
+path = "~/.config/nvim/lua/lucas/remap.lua"
+parser = "static"
+section = "builtin"
+static_binds = [
+  ["0",                     "start of line (column 0)"],
+  ["^",                     "first non-blank of line"],
+  ["$",                     "end of line"],
+  ["g_",                    "last non-blank of line"],
+  ["g0 / g^ / g$",          "screen-line start / first non-blank / end"],
+  ["w / W",                 "next word / WORD start"],
+  ["e / E",                 "next word / WORD end"],
+  ["b / B",                 "prev word / WORD start"],
+  ["ge / gE",               "prev word / WORD end"],
+  ["gg / G",                "first / last line"],
+  ["{n}G  /  :{n}",         "jump to line n"],
+  ["H / M / L",             "top / middle / bottom of screen"],
+  ["zt / zz / zb",          "scroll: cursor to top / center / bottom"],
+  ["<C-d> / <C-u>",         "half page down / up"],
+  ["<C-f> / <C-b>",         "full page fwd / back"],
+  ["%",                     "match pair (){}[]"],
+  ["* / #",                 "search word under cursor fwd / back"],
+  ["f{c} / F{c}",           "find char fwd / back on line"],
+  ["t{c} / T{c}",           "till char fwd / back on line"],
+  ["; / ,",                 "repeat f/t fwd / back"],
+  ["``  /  ''",             "back to last jump (exact / line)"],
+  ["<C-o> / <C-i>",         "jump list back / forward"],
+  ["m{a-z} / `{a-z}",       "set mark / jump to mark"],
+  ["ciw / caw",             "change inner / a word"],
+  ["ci\" / ca(",            "change inner quotes / a-paren"],
+  ["dd / yy / cc",          "delete / yank / change line"],
+  ["D / Y / C",             "delete / yank / change to EOL"],
+  ["x / X",                 "delete char under / before cursor"],
+  ["u / <C-r>",             "undo / redo"],
+  ["p / P",                 "paste after / before"],
+  ["\".p",                  "paste from register . (last insert)"],
+  [":reg",                  "show registers"],
+  ["q{a-z} / @{a-z}",       "record / replay macro"],
+  ["<C-a> / <C-x>",         "increment / decrement number"],
+  [">> / <<",               "indent / dedent line"],
+  ["=ap",                   "auto-indent paragraph"],
+  ["zf / zo / zc",          "fold create / open / close"],
+]
+
+[[tool]]
 name = "mpv"
 path = "~/.config/mpv/input.conf"
 parser = "mpv_input"
@@ -138,18 +207,6 @@ static_binds = [
 ]
 
 [[tool]]
-name = "mako"
-path = "~/.config/mako/config"
-parser = "static"
-section = "defaults"
-static_binds = [
-  ["Ctrl+Space",             "dismiss top notification"],
-  ["Ctrl+Shift+Space",       "dismiss all"],
-  ["Ctrl+Grave",             "invoke default action"],
-  ["Ctrl+Shift+period",      "restore last"],
-]
-
-[[tool]]
 name = "waybar"
 path = "~/.config/waybar/config"
 parser = "static"
@@ -160,6 +217,23 @@ static_binds = [
   ["click clock",            "show calendar popup"],
   ["click tray",             "open app menu"],
   ["click workspaces",       "switch workspace"],
+]
+
+[[tool]]
+name = "mpv-queue"
+path = "~/.local/bin/mpv-queue"
+parser = "static"
+section = "global-keys (SUPER+ALT)"
+static_binds = [
+  ["SUPER+ALT+Space",   "toggle pause"],
+  ["SUPER+ALT+N",       "next in queue"],
+  ["SUPER+ALT+P",       "prev in queue"],
+  ["SUPER+ALT+]",       "seek +10s"],
+  ["SUPER+ALT+[",       "seek -10s"],
+  ["SUPER+ALT+C",       "clear queue (keeps current)"],
+  ["SUPER+ALT+Q",       "quit mpv"],
+  ["SUPER+ALT+I",       "status notify (count + title)"],
+  ["mpv-queue <url>",   "(CLI) queue or play in browser-shared mpv"],
 ]
 
 [[tool]]
